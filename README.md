@@ -1,4 +1,4 @@
-# Campus Event Tracker
+# UniVide
 
 A full-stack web application for managing campus events built with Spring Boot, Thymeleaf, and MySQL.
 
