@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout (~{::content})}">
+<body>
+<div th:fragment="content">
+<style>
+    .page-hero {
+        background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #312E81 100%);
+        border-radius: 20px; padding: 60px 52px; color: white;
+        position: relative; overflow: hidden; margin-bottom: 32px;
+    }
+    .page-hero::before {
+        content:''; position:absolute; top:-80px; right:-80px;
+        width:260px; height:260px;
+        background: radial-gradient(circle,rgba(108,99,255,.35) 0%,transparent 70%);
+    }
+    .info-card {
+        background: #161B27; border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+        padding: 28px 30px; height: 100%;
+        transition: all 0.25s;
+    }
+    .info-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); border-color: rgba(108,99,255,0.2); }
+    .info-card-icon {
+        width: 52px; height: 52px; border-radius: 13px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; margin-bottom: 18px;
+    }
+    .info-card-title { font-weight: 800; font-size: 1.05rem; color: #E2E8F0; margin-bottom: 10px; }
+    .info-card-text  { color: #475569; font-size: 0.9rem; line-height: 1.7; margin: 0; }
+    .feature-row {
+        display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px;
+    }
+    .feature-icon {
+        width: 40px; height: 40px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; flex-shrink: 0;
+    }
+    .tech-pill {
+        display: flex; flex-direction: column; align-items: center; gap: 8px;
+        background: #0D1117; border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px; padding: 22px 16px;
+        text-align: center; transition: all 0.2s;
+    }
+    .tech-pill:hover { background: rgba(108,99,255,0.1); border-color: rgba(108,99,255,0.2); }
+    .tech-pill-icon { font-size: 2rem; }
+    .tech-pill-name  { font-weight: 700; font-size: 0.88rem; color: #E2E8F0; }
+    .tech-pill-label { font-size: 0.75rem; color: #475569; }
+    .cta-card {
+        background: linear-gradient(135deg, #0F172A, #312E81);
+        border-radius: 20px; padding: 48px; color: white; text-align: center;
+        position: relative; overflow: hidden; margin-top: 32px;
+    }
+    .cta-card::before {
+        content:''; position:absolute; top:-60px; right:-60px;
+        width:200px; height:200px;
+        background:radial-gradient(circle,rgba(108,99,255,.35) 0%,transparent 70%);
+    }
+    .cta-btn-light {
+        background: white; color: #6C63FF; border-radius: 10px;
+        padding: 13px 28px; font-weight: 700; text-decoration: none;
+        display: inline-flex; align-items: center; gap: 8px;
+        transition: all 0.25s; font-size: 0.95rem;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .cta-btn-light:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.2); }
+    .cta-btn-outline {
+        background: rgba(255,255,255,0.1); color: white; border: 1.5px solid rgba(255,255,255,0.25);
+        border-radius: 10px; padding: 13px 28px; font-weight: 600;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        transition: all 0.25s; font-size: 0.95rem;
+    }
+    .cta-btn-outline:hover { background: rgba(255,255,255,0.18); color: white; }
+</style>
+
+<!-- Page Hero -->
+<div class="page-hero animate-fade-in">
+    <div style="position:relative;z-index:1;max-width:600px;">
+        <div style="width:52px;height:52px;border-radius:13px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.5rem;">ℹ️</div>
+        <h1 style="font-weight:800;font-size:clamp(1.8rem,4vw,2.4rem);letter-spacing:-0.5px;margin-bottom:10px;">About CampusEvents</h1>
+        <p style="color:#94A3B8;font-size:1rem;line-height:1.7;margin:0;">Your one-stop platform for discovering and managing campus events — built for students, by students.</p>
+    </div>
+</div>
+
+<!-- Mission & Who We Serve -->
+<div class="row g-4 mb-4 animate-fade-in">
+    <div class="col-md-6">
+        <div class="info-card">
+            <div class="info-card-icon" style="background:#EEF2FF;"><i class="bi bi-bullseye" style="color:#6C63FF;"></i></div>
+            <div class="info-card-title">Our Mission</div>
+            <p class="info-card-text">
+                CampusEvents centralises event management for college students, faculty, and organisers.
+                We make it effortless to discover workshops, sports events, cultural programmes, and club activities — all in one place.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="info-card">
+            <div class="info-card-icon" style="background:#FDF4FF;"><i class="bi bi-people-fill" style="color:#C026D3;"></i></div>
+            <div class="info-card-title">Who We Serve</div>
+            <div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;color:#94A3B8;font-size:0.9rem;">
+                    <i class="bi bi-check-circle-fill" style="color:#34D399;flex-shrink:0;"></i><span>College Students</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;color:#94A3B8;font-size:0.9rem;">
+                    <i class="bi bi-check-circle-fill" style="color:#34D399;flex-shrink:0;"></i><span>Faculty Members</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;color:#94A3B8;font-size:0.9rem;">
+                    <i class="bi bi-check-circle-fill" style="color:#34D399;flex-shrink:0;"></i><span>Event Organisers</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;color:#94A3B8;font-size:0.9rem;">
+                    <i class="bi bi-check-circle-fill" style="color:#34D399;flex-shrink:0;"></i><span>Club Leaders</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Features -->
+<div class="info-card mb-4 animate-fade-in" style="animation-delay:0.1s;">
+    <div class="info-card-title" style="margin-bottom:24px;">⭐ Key Features</div>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="feature-row">
+                <div class="feature-icon" style="background:#EEF2FF;"><i class="bi bi-calendar-event" style="color:#6C63FF;"></i></div>
+                <div>
+                    <div style="font-weight:700;color:#0F172A;font-size:0.95rem;margin-bottom:4px;">Event Discovery</div>
+                    <p style="color:#64748B;font-size:0.85rem;margin:0;">Browse and search upcoming events by type, date, and location.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-row">
+                <div class="feature-icon" style="background:#ECFDF5;"><i class="bi bi-check-circle-fill" style="color:#059669;"></i></div>
+                <div>
+                    <div style="font-weight:700;color:#0F172A;font-size:0.95rem;margin-bottom:4px;">One-Click RSVP</div>
+                    <p style="color:#64748B;font-size:0.85rem;margin:0;">Register for any event instantly with duplicate prevention.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-row">
+                <div class="feature-icon" style="background:#FFFBEB;"><i class="bi bi-bell-fill" style="color:#D97706;"></i></div>
+                <div>
+                    <div style="font-weight:700;color:#0F172A;font-size:0.95rem;margin-bottom:4px;">Smart Reminders</div>
+                    <p style="color:#64748B;font-size:0.85rem;margin:0;">Automatic email reminders sent 24 hours before your events.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-row">
+                <div class="feature-icon" style="background:#EEF2FF;"><i class="bi bi-plus-circle-fill" style="color:#6C63FF;"></i></div>
+                <div>
+                    <div style="font-weight:700;color:#0F172A;font-size:0.95rem;margin-bottom:4px;">Event Creation</div>
+                    <p style="color:#64748B;font-size:0.85rem;margin:0;">Create and manage your own events with attendee tracking.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-row">
+                <div class="feature-icon" style="background:#F0FDF4;"><i class="bi bi-search" style="color:#059669;"></i></div>
+                <div>
+                    <div style="font-weight:700;color:#0F172A;font-size:0.95rem;margin-bottom:4px;">Filter &amp; Search</div>
+                    <p style="color:#64748B;font-size:0.85rem;margin:0;">Filter by Sports, Cultural, Workshop, Academic, or Social category.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-row">
+                <div class="feature-icon" style="background:#FDF4FF;"><i class="bi bi-phone-fill" style="color:#C026D3;"></i></div>
+                <div>
+                    <div style="font-weight:700;color:#0F172A;font-size:0.95rem;margin-bottom:4px;">Mobile Friendly</div>
+                    <p style="color:#64748B;font-size:0.85rem;margin:0;">Fully responsive — looks great on desktop, tablet, and mobile.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tech Stack -->
+<div class="info-card mb-4 animate-fade-in" style="animation-delay:0.2s;">
+    <div class="info-card-title" style="margin-bottom:20px;">⚙️ Technology Stack</div>
+    <div class="row g-3">
+        <div class="col-6 col-md-3">
+            <div class="tech-pill">
+                <span class="tech-pill-icon">☕</span>
+                <span class="tech-pill-name">Spring Boot</span>
+                <span class="tech-pill-label">Backend</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="tech-pill">
+                <span class="tech-pill-icon">🔐</span>
+                <span class="tech-pill-name">Spring Security</span>
+                <span class="tech-pill-label">Auth</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="tech-pill">
+                <span class="tech-pill-icon">🗄️</span>
+                <span class="tech-pill-name">MySQL</span>
+                <span class="tech-pill-label">Database</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="tech-pill">
+                <span class="tech-pill-icon">🎨</span>
+                <span class="tech-pill-name">Bootstrap 5</span>
+                <span class="tech-pill-label">UI Framework</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-card animate-fade-in" style="animation-delay:0.25s;">
+    <div style="position:relative;z-index:1;">
+        <h3 style="font-weight:800;font-size:1.6rem;margin-bottom:10px;">Ready to get started?</h3>
+        <p style="color:#94A3B8;margin-bottom:28px;">Join thousands of students discovering amazing campus events.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="/register" class="cta-btn-light"><i class="bi bi-person-plus"></i>Create Account</a>
+            <a href="/"         class="cta-btn-outline"><i class="bi bi-calendar-event"></i>Browse Events</a>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

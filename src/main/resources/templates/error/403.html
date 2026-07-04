@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout (~{::content})}">
+<body>
+<div th:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="hero-section animate-fade-in">
+                <i class="bi bi-shield-x" style="font-size: 5rem; color: #dc3545;"></i>
+                <h1 class="display-1 text-danger mt-3">403</h1>
+                <h2 class="mb-4">Access Denied</h2>
+                <p class="lead mb-4">You don't have permission to access this resource.</p>
+                <p class="text-muted mb-4">
+                    This page requires authentication or special permissions. 
+                    Please log in with an authorized account.
+                </p>
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <a href="/" class="btn btn-primary">
+                        <i class="bi bi-house"></i> Go to Home
+                    </a>
+                    <a href="/login" class="btn btn-secondary">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

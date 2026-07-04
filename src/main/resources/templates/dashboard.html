@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout (~{::content})}">
+<body>
+<div th:fragment="content">
+<style>
+    .dash-hero {
+        background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #312E81 100%);
+        border-radius: 20px;
+        padding: 40px 44px;
+        color: white;
+        position: relative; overflow: hidden;
+        margin-bottom: 32px;
+    }
+    .dash-hero::before {
+        content:''; position:absolute; top:-80px; right:-80px;
+        width:260px; height:260px;
+        background: radial-gradient(circle, rgba(108,99,255,.35) 0%, transparent 70%);
+    }
+    .dash-hero::after {
+        content:''; position:absolute; bottom:-60px; left:-60px;
+        width:200px; height:200px;
+        background: radial-gradient(circle, rgba(255,101,132,.2) 0%, transparent 70%);
+    }
+    .user-avatar {
+        width: 64px; height: 64px; border-radius: 16px;
+        background: linear-gradient(135deg, #6C63FF, #5A52D5);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.6rem; font-weight: 800; color: white;
+        flex-shrink: 0;
+    }
+    .hero-stat-box {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 14px;
+        padding: 20px 28px;
+        text-align: center;
+    }
+    .stat-card {
+        background: #161B27;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        padding: 22px 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        display: flex; align-items: center; gap: 16px;
+        transition: all 0.25s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-color: rgba(108,99,255,0.2); }
+    .stat-icon {
+        width: 50px; height: 50px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem; flex-shrink: 0;
+    }
+    .stat-num   { font-size: 1.6rem; font-weight: 800; line-height: 1; color: #E2E8F0; }
+    .stat-label { font-size: 0.8rem; color: #475569; font-weight: 500; margin-top: 3px; }
+
+    .section-head {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .section-title { font-size: 1.25rem; font-weight: 800; color: #E2E8F0; margin: 0; }
+
+    .ev-card {
+        background: #161B27; 
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px; overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        transition: all 0.3s; height: 100%; display: flex; flex-direction: column;
+    }
+    .ev-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(108,99,255,0.18); border-color: rgba(108,99,255,0.25); }
+    .ev-card-header {
+        padding: 16px 20px; color: white;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .ev-type-chip {
+        background: rgba(255,255,255,0.22); border-radius: 6px;
+        padding: 4px 12px; font-size: 0.78rem; font-weight: 700;
+    }
+    .ev-status-chip {
+        background: rgba(255,255,255,0.22); border-radius: 6px;
+        padding: 4px 12px; font-size: 0.78rem; font-weight: 700;
+        display: flex; align-items: center; gap: 4px;
+    }
+    .ev-body { padding: 20px; flex: 1; }
+    .ev-title { font-size: 1rem; font-weight: 700; color: #E2E8F0; margin-bottom: 12px; line-height: 1.4; }
+    .ev-meta-item {
+        display: flex; align-items: center; gap: 10px;
+        color: #475569; font-size: 0.84rem; margin-bottom: 7px;
+    }
+    .ev-meta-icon {
+        width: 26px; height: 26px; border-radius: 6px; background: rgba(108,99,255,0.1);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.76rem; color: #818CF8; flex-shrink: 0;
+    }
+    .reminder-chip {
+        background: rgba(108,99,255,0.1); color: #818CF8; border-radius: 8px;
+        padding: 8px 12px; font-size: 0.8rem; font-weight: 600;
+        display: flex; align-items: center; gap: 6px; margin-top: 12px;
+    }
+    .ev-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+</style>
+
+<!-- HERO -->
+<div class="dash-hero animate-fade-in">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center gap-4" style="position:relative;z-index:1;">
+                <div class="user-avatar" th:text="${#strings.substring(user.name, 0, 1)}">U</div>
+                <div>
+                    <div style="font-size:0.8rem;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">My Dashboard</div>
+                    <h2 style="font-weight:800;font-size:1.6rem;margin-bottom:4px;letter-spacing:-0.3px;" th:text="${user.name}">Name</h2>
+                    <div style="color:#94A3B8;font-size:0.88rem;" th:text="${user.email}">email</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mt-4 mt-md-0 text-md-end" style="position:relative;z-index:1;">
+            <div class="hero-stat-box d-inline-block">
+                <div style="font-size:2.2rem;font-weight:800;" th:text="${#lists.size(rsvps)}">0</div>
+                <div style="font-size:0.85rem;color:#94A3B8;">Events Registered</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STAT CARDS -->
+<div class="row g-3 mb-5 animate-fade-in">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#EEF2FF;">
+                <i class="bi bi-calendar-check-fill" style="color:#6C63FF;"></i>
+            </div>
+            <div>
+                <div class="stat-num" th:text="${#lists.size(rsvps)}">0</div>
+                <div class="stat-label">Total RSVPs</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#FDF4FF;">
+                <i class="bi bi-bell-fill" style="color:#C026D3;"></i>
+            </div>
+            <div>
+                <div class="stat-num" th:text="${#lists.size(rsvps)}">0</div>
+                <div class="stat-label">Active Reminders</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <a href="/events/create" style="text-decoration:none;">
+            <div class="stat-card" style="background:linear-gradient(135deg,#6C63FF,#5A52D5);color:white;cursor:pointer;">
+                <div class="stat-icon" style="background:rgba(255,255,255,0.15);">
+                    <i class="bi bi-plus-circle-fill" style="color:white;"></i>
+                </div>
+                <div>
+                    <div style="font-size:1rem;font-weight:700;color:white;">Create Event</div>
+                    <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);">Host your own</div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- EVENTS SECTION -->
+<div class="section-head animate-fade-in">
+    <h3 class="section-title"><i class="bi bi-calendar-check me-2" style="color:#6C63FF;"></i>My Upcoming Events</h3>
+    <a href="/" class="btn btn-primary btn-sm" style="font-size:0.85rem;">
+        <i class="bi bi-search me-1"></i>Find More Events
+    </a>
+</div>
+
+<!-- Events grid -->
+<div th:if="${!#lists.isEmpty(rsvps)}" class="row g-4">
+    <div class="col-md-6 col-lg-4 animate-fade-in"
+         th:each="rsvp, iterStat : ${rsvps}"
+         th:style="'animation-delay:' + ${iterStat.index * 0.08} + 's'">
+        <div class="ev-card">
+            <div class="ev-card-header"
+                 th:classappend="${rsvp.event.type == 'Sports'   ? 'type-strip-sports'   :
+                                  rsvp.event.type == 'Cultural' ? 'type-strip-cultural' :
+                                  rsvp.event.type == 'Workshop' ? 'type-strip-workshop' :
+                                  rsvp.event.type == 'Social'   ? 'type-strip-social'   :
+                                  'type-strip-academic'}">
+                <span class="ev-type-chip">
+                    <span th:if="${rsvp.event.type == 'Sports'}">&#x26BD;</span>
+                    <span th:if="${rsvp.event.type == 'Cultural'}">&#x1F3AD;</span>
+                    <span th:if="${rsvp.event.type == 'Workshop'}">&#x1F4A1;</span>
+                    <span th:if="${rsvp.event.type == 'Academic'}">&#x1F4DA;</span>
+                    <span th:if="${rsvp.event.type == 'Social'}">&#x1F91D;</span>
+                    &nbsp;<span th:text="${rsvp.event.type}">Type</span>
+                </span>
+                <span class="ev-status-chip"><i class="bi bi-check-circle-fill"></i> Going</span>
+            </div>
+            <div class="ev-body">
+                <div class="ev-title" th:text="${rsvp.event.title}">Title</div>
+                <div class="ev-meta-item">
+                    <div class="ev-meta-icon"><i class="bi bi-calendar3"></i></div>
+                    <span th:text="${rsvp.event.date}">Date</span>
+                </div>
+                <div class="ev-meta-item">
+                    <div class="ev-meta-icon"><i class="bi bi-clock"></i></div>
+                    <span th:text="${rsvp.event.time}">Time</span>
+                </div>
+                <div class="ev-meta-item">
+                    <div class="ev-meta-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                    <span th:text="${rsvp.event.location}">Location</span>
+                </div>
+                <div class="reminder-chip">
+                    <i class="bi bi-bell-fill"></i> Reminder: 24h before
+                </div>
+                <div style="font-size:0.78rem;color:#94A3B8;margin-top:10px;">
+                    <i class="bi bi-clock-history me-1"></i>
+                    RSVP'd <span th:text="${#temporals.format(rsvp.timestamp, 'MMM dd, yyyy')}">date</span>
+                </div>
+            </div>
+            <div class="ev-footer">
+                <div class="d-grid gap-2">
+                    <a th:href="@{/events/{id}(id=${rsvp.event.id})}" class="btn btn-primary btn-sm" style="border-radius:8px;">
+                        <i class="bi bi-eye me-1"></i>View Details
+                    </a>
+                    <form th:action="@{/events/{id}/cancel-rsvp(id=${rsvp.event.id})}" method="post">
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100" style="border-radius:8px;font-size:0.82rem;"
+                                onclick="return confirm('Cancel your RSVP for this event?')">
+                            <i class="bi bi-x-circle me-1"></i>Cancel RSVP
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Empty state -->
+<div th:if="${#lists.isEmpty(rsvps)}" class="animate-fade-in">
+    <div style="background:#161B27;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:80px 40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.3);">
+        <div style="width:90px;height:90px;background:rgba(108,99,255,0.1);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;">
+            <i class="bi bi-calendar-x" style="font-size:2.5rem;color:#818CF8;"></i>
+        </div>
+        <h4 style="font-weight:800;color:#E2E8F0;margin-bottom:10px;">No events yet</h4>
+        <p style="color:#475569;font-size:0.95rem;max-width:400px;margin:0 auto 24px;">
+            You haven't RSVP'd to any events. Explore what's happening on campus!
+        </p>
+        <a href="/" class="btn btn-primary">
+            <i class="bi bi-search me-1"></i>Discover Events
+        </a>
+    </div>
+</div>
+</div>
+</body>
+</html>

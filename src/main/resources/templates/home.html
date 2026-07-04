@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout :: layout (~{::content})}">
+<body>
+<div th:fragment="content">
+<style>
+    .hero-wrap {
+        background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #312E81 100%);
+        border-radius: 24px;
+        padding: 80px 60px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 40px;
+        margin-left: -12px;
+        margin-right: -12px;
+    }
+    .hero-wrap::before {
+        content: '';
+        position: absolute;
+        top: -120px; right: -120px;
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(108,99,255,0.4) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .hero-wrap::after {
+        content: '';
+        position: absolute;
+        bottom: -80px; left: -80px;
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(255,101,132,0.25) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* ── HERO BADGE ── */
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(108,99,255,0.18);
+        border: 1px solid rgba(139,92,246,0.5);
+        border-radius: 50px;
+        padding: 9px 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 30px rgba(108,99,255,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        animation: badgePulse 3s ease-in-out infinite;
+        white-space: nowrap;
+    }
+    .hero-badge::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(167,139,250,0.2), transparent);
+        background-size: 200% 100%;
+        animation: badgeShimmer 2.5s linear infinite;
+    }
+    .hero-badge-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #a78bfa;
+        flex-shrink: 0;
+        box-shadow: 0 0 12px rgba(167,139,250,1);
+        animation: dotBlink 1.4s ease-in-out infinite;
+    }
+    .hero-badge-static {
+        color: #cbd5e1;
+        position: relative;
+        z-index: 1;
+    }
+    .hero-badge-typed {
+        color: #f5f3ff;
+        font-weight: 800;
+        font-size: 0.92rem;
+        border-right: 2px solid #a78bfa;
+        padding-right: 3px;
+        animation: cursorBlink 0.7s step-end infinite;
+        position: relative;
+        z-index: 1;
+        min-width: 4px;
+        display: inline-block;
+    }
+    @keyframes badgePulse {
+        0%,100% { box-shadow: 0 0 30px rgba(108,99,255,0.3), inset 0 1px 0 rgba(255,255,255,0.1); }
+        50%      { box-shadow: 0 0 50px rgba(139,92,246,0.55), inset 0 1px 0 rgba(255,255,255,0.15); }
+    }
+    @keyframes badgeShimmer {
+        0%   { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    @keyframes dotBlink {
+        0%,100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: 0.3; transform: scale(0.65); }
+    }
+    @keyframes cursorBlink {
+        0%,100% { border-color: #a78bfa; }
+        50%      { border-color: transparent; }
+    }
+
+    .hero-title {
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        color: white;
+        line-height: 1.15;
+        letter-spacing: -1px;
+        margin-bottom: 18px;
+    }
+    .hero-title span {
+        background: linear-gradient(135deg, #818CF8, #F472B6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .hero-sub {
+        color: #94A3B8;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        max-width: 520px;
+        margin-bottom: 32px;
+    }
+    .hero-btn-primary {
+        background: linear-gradient(135deg, #6C63FF, #5A52D5);
+        color: white !important;
+        border: none;
+        border-radius: 10px;
+        padding: 13px 28px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s;
+        box-shadow: 0 6px 20px rgba(108,99,255,0.4);
+    }
+    .hero-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(108,99,255,0.5); }
+    .hero-btn-secondary {
+        background: rgba(255,255,255,0.07);
+        color: white !important;
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 13px 28px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s;
+    }
+    .hero-btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    .hero-stats { display: flex; gap: 32px; margin-top: 40px; }
+    .hero-stat-num { font-size: 1.6rem; font-weight: 800; color: white; line-height: 1; }
+    .hero-stat-label { font-size: 0.78rem; color: #64748B; font-weight: 500; margin-top: 2px; }
+
+    .hero-visual { position: relative; z-index: 1; }
+    .floating-card {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        color: white;
+    }
+    .floating-card-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .floating-card-meta  { font-size: 0.8rem; color: #94A3B8; }
+    .fc-badge {
+        display: inline-block;
+        background: rgba(108,99,255,0.25);
+        color: #A5B4FC;
+        border-radius: 6px;
+        padding: 3px 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .float-anim { animation: floatY 5s ease-in-out infinite; }
+    .float-anim-delay { animation: floatY 5s ease-in-out 1.5s infinite; }
+
+    .search-wrap {
+        background: #161B27;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        padding: 24px 28px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        margin-bottom: 36px;
+    }
+    .search-input-group {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: border-color 0.2s;
+        background: #0D1117;
+    }
+    .search-input-group:focus-within { border-color: #6C63FF; box-shadow: 0 0 0 3px rgba(108,99,255,0.15); }
+    .search-input-group .search-icon { padding: 0 14px; color: #6C63FF; font-size: 1rem; }
+    .search-input-group input {
+        border: none !important; outline: none !important; box-shadow: none !important;
+        padding: 11px 8px; flex: 1; font-size: 0.93rem; background: transparent; color: #E2E8F0;
+    }
+    .search-input-group input::placeholder { color: #374151; }
+    .search-input-group .search-btn {
+        background: #6C63FF; color: white; border: none;
+        padding: 11px 22px; font-weight: 600; font-size: 0.88rem; transition: background 0.2s;
+    }
+    .search-input-group .search-btn:hover { background: #5A52D5; }
+
+    .ev-card {
+        background: #161B27; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+        overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        transition: all 0.3s cubic-bezier(0.4,0,0.2,1); height: 100%; display: flex; flex-direction: column;
+    }
+    .ev-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(108,99,255,0.2); border-color: rgba(108,99,255,0.25); }
+    .ev-card-header { padding: 18px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
+    .ev-type-chip { background: rgba(255,255,255,0.22); backdrop-filter: blur(6px); border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; font-weight: 700; }
+    .ev-attendees { background: rgba(255,255,255,0.22); backdrop-filter: blur(6px); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; font-weight: 600; }
+    .ev-body { padding: 22px; flex: 1; }
+    .ev-title { font-size: 1.05rem; font-weight: 700; color: #E2E8F0; margin-bottom: 14px; line-height: 1.4; }
+    .ev-meta-item { display: flex; align-items: center; gap: 10px; color: #64748B; font-size: 0.86rem; margin-bottom: 8px; }
+    .ev-meta-icon { width: 28px; height: 28px; border-radius: 7px; background: rgba(108,99,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.8rem; color: #818CF8; }
+    .ev-desc { color: #475569; font-size: 0.86rem; line-height: 1.6; margin-top: 12px; }
+    .ev-footer { padding: 16px 22px; border-top: 1px solid rgba(255,255,255,0.05); }
+    .ev-view-btn {
+        display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+        background: linear-gradient(135deg, #6C63FF, #5A52D5); color: white !important;
+        text-decoration: none; border-radius: 9px; padding: 11px; font-weight: 600; font-size: 0.9rem;
+        transition: all 0.25s; box-shadow: 0 3px 10px rgba(108,99,255,0.25);
+    }
+    .ev-view-btn:hover { box-shadow: 0 6px 18px rgba(108,99,255,0.4); transform: translateY(-1px); }
+
+    .result-bar {
+        background: #161B27; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+        padding: 14px 20px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .result-count { font-weight: 700; color: #E2E8F0; font-size: 1rem; }
+    .result-count span { color: #818CF8; }
+</style>
+
+<!-- HERO -->
+<div class="hero-wrap" style="animation: fadeInUp 0.6s ease 0.1s both;">
+    <div class="row align-items-center">
+        <div class="col-lg-6" style="position:relative;z-index:1;">
+
+            <!-- Typewriter badge -->
+            <div class="hero-badge">
+                <div class="hero-badge-dot"></div>
+                <span class="hero-badge-static">Vibe: </span>
+                <span class="hero-badge-typed" id="vibeTyped"></span>
+            </div>
+
+            <h1 class="hero-title">Discover Events That <span>Inspire You</span></h1>
+            <p class="hero-sub">Find sports tournaments, cultural fests, workshops, academic talks, and social drives — all in one place. RSVP in seconds, get reminded automatically.</p>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="#events" class="hero-btn-primary"><i class="bi bi-search"></i> Browse Events</a>
+                <a href="/register" class="hero-btn-secondary" sec:authorize="!isAuthenticated()"><i class="bi bi-person-plus"></i> Join Free</a>
+                <a href="/events/create" class="hero-btn-secondary" sec:authorize="isAuthenticated()"><i class="bi bi-plus-circle"></i> Create Event</a>
+            </div>
+            <div class="hero-stats">
+                <div>
+                    <div class="hero-stat-num">500+</div>
+                    <div class="hero-stat-label">Events Hosted</div>
+                </div>
+                <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+                <div>
+                    <div class="hero-stat-num">2K+</div>
+                    <div class="hero-stat-label">Students</div>
+                </div>
+                <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+                <div>
+                    <div class="hero-stat-num">5</div>
+                    <div class="hero-stat-label">Categories</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 offset-lg-1 mt-5 mt-lg-0 hero-visual d-none d-lg-block">
+            <div class="float-anim mb-3">
+                <div class="floating-card">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">&#x26BD;</div>
+                        <div>
+                            <div class="floating-card-title">Inter-College Football Cup</div>
+                            <div class="floating-card-meta"><i class="bi bi-calendar3 me-1"></i>Tomorrow · 4:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fc-badge">Sports</span>
+                        <span style="font-size:0.8rem;color:#94A3B8;"><i class="bi bi-people-fill me-1"></i>24 attending</span>
+                    </div>
+                </div>
+            </div>
+            <div class="float-anim-delay" style="margin-left:32px;">
+                <div class="floating-card">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#43e97b,#38f9d7);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">&#x1F4A1;</div>
+                        <div>
+                            <div class="floating-card-title">Web Dev Bootcamp</div>
+                            <div class="floating-card-meta"><i class="bi bi-calendar3 me-1"></i>This Saturday · 10:00 AM</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="display:flex;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);border:2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#f093fb,#f5576c);border:2px solid rgba(255,255,255,0.1);margin-left:-6px;"></div>
+                            <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#43e97b,#38f9d7);border:2px solid rgba(255,255,255,0.1);margin-left:-6px;"></div>
+                        </div>
+                        <span style="font-size:0.78rem;color:#94A3B8;">+12 registered</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SEARCH & FILTER -->
+<div class="search-wrap animate-fade-in" id="events">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-8">
+            <form method="get" action="/">
+                <div class="search-input-group">
+                    <span class="search-icon"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" placeholder="Search events by title, keyword..." th:value="${searchQuery}">
+                    <button class="search-btn" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" onchange="window.location.href='/?type='+this.value" style="font-weight:500;">
+                <option value="">All Categories</option>
+                <option value="Sports"   th:selected="${selectedType == 'Sports'}">Sports</option>
+                <option value="Cultural" th:selected="${selectedType == 'Cultural'}">Cultural</option>
+                <option value="Workshop" th:selected="${selectedType == 'Workshop'}">Workshop</option>
+                <option value="Academic" th:selected="${selectedType == 'Academic'}">Academic</option>
+                <option value="Social"   th:selected="${selectedType == 'Social'}">Social</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- RESULT BAR -->
+<div class="result-bar animate-fade-in" th:if="${!#lists.isEmpty(events)}">
+    <div class="result-count"><span th:text="${#lists.size(events)}">0</span> upcoming events found</div>
+    <div class="d-flex gap-2 flex-wrap">
+        <span th:if="${selectedType != null}" class="stat-pill"><i class="bi bi-funnel-fill"></i> <span th:text="${selectedType}">Type</span></span>
+        <span th:if="${searchQuery != null}" class="stat-pill"><i class="bi bi-search"></i> "<span th:text="${searchQuery}">q</span>"</span>
+        <a href="/" th:if="${selectedType != null or searchQuery != null}" class="btn btn-secondary btn-sm" style="border-radius:8px;font-size:0.82rem;padding:4px 12px;">Clear filters</a>
+    </div>
+</div>
+
+<!-- EVENTS GRID -->
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4 animate-fade-in"
+         th:each="event, iterStat : ${events}"
+         th:style="'animation-delay:' + ${iterStat.index * 0.07} + 's'">
+        <div class="ev-card">
+            <div class="ev-card-header"
+                 th:classappend="${event.type == 'Sports'   ? 'type-strip-sports'   :
+                                  event.type == 'Cultural' ? 'type-strip-cultural' :
+                                  event.type == 'Workshop' ? 'type-strip-workshop' :
+                                  event.type == 'Social'   ? 'type-strip-social'   :
+                                  'type-strip-academic'}">
+                <span class="ev-type-chip">
+                    <span th:text="${event.type}">Type</span>
+                </span>
+                <span class="ev-attendees"><i class="bi bi-people-fill me-1"></i><strong th:text="${event.rsvpCount}">0</strong></span>
+            </div>
+            <div class="ev-body">
+                <div class="ev-title" th:text="${event.title}">Event Title</div>
+                <div class="ev-meta-item">
+                    <div class="ev-meta-icon"><i class="bi bi-calendar3"></i></div>
+                    <span th:text="${event.date}">Date</span>
+                </div>
+                <div class="ev-meta-item">
+                    <div class="ev-meta-icon"><i class="bi bi-clock"></i></div>
+                    <span th:text="${event.time}">Time</span>
+                </div>
+                <div class="ev-meta-item">
+                    <div class="ev-meta-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                    <span th:text="${event.location}">Location</span>
+                </div>
+                <p class="ev-desc" th:text="${#strings.abbreviate(event.description, 90)}">Description</p>
+            </div>
+            <div class="ev-footer">
+                <a th:href="@{/events/{id}(id=${event.id})}" class="ev-view-btn">
+                    View Details <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RECENTLY ENDED EVENTS -->
+<div th:if="${!#lists.isEmpty(pastEvents)}" style="margin-top:48px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <div style="width:4px;height:28px;background:linear-gradient(180deg,#6c63ff,#f472b6);border-radius:4px;"></div>
+        <h5 style="margin:0;font-weight:800;color:#94a3b8;font-size:1rem;letter-spacing:0.5px;text-transform:uppercase;">Recently Ended</h5>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.06);"></div>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-6 col-lg-4"
+             th:each="event : ${pastEvents}">
+            <div class="ev-card" style="opacity:0.6;filter:grayscale(0.3);position:relative;">
+                <!-- Ended ribbon -->
+                <div style="position:absolute;top:12px;right:12px;z-index:10;background:rgba(0,0,0,0.5);color:#94a3b8;font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:0.5px;backdrop-filter:blur(6px);">
+                    <i class="bi bi-clock-history me-1"></i>ENDED
+                </div>
+                <div class="ev-card-header"
+                     th:classappend="${event.type == 'Sports'   ? 'type-strip-sports'   :
+                                      event.type == 'Cultural' ? 'type-strip-cultural' :
+                                      event.type == 'Workshop' ? 'type-strip-workshop' :
+                                      event.type == 'Social'   ? 'type-strip-social'   :
+                                      'type-strip-academic'}">
+                    <span class="ev-type-chip" th:text="${event.type}">Type</span>
+                    <span class="ev-attendees"><i class="bi bi-people-fill me-1"></i><strong th:text="${event.rsvpCount}">0</strong></span>
+                </div>
+                <div class="ev-body">
+                    <div class="ev-title" th:text="${event.title}">Event Title</div>
+                    <div class="ev-meta-item">
+                        <div class="ev-meta-icon"><i class="bi bi-calendar3"></i></div>
+                        <span th:text="${event.date}">Date</span>
+                    </div>
+                    <div class="ev-meta-item">
+                        <div class="ev-meta-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                        <span th:text="${event.location}">Location</span>
+                    </div>
+                    <p class="ev-desc" th:text="${#strings.abbreviate(event.description, 90)}">Description</p>
+                </div>
+                <div class="ev-footer">
+                    <a th:href="@{/events/{id}(id=${event.id})}" class="ev-view-btn" style="background:rgba(255,255,255,0.06);box-shadow:none;">
+                        View Details <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EMPTY STATE -->
+<div th:if="${#lists.isEmpty(events)}" class="empty-state-wrap animate-fade-in">
+
+    <!-- Floating orbs behind -->
+    <div class="es-orb es-orb-1"></div>
+    <div class="es-orb es-orb-2"></div>
+    <div class="es-orb es-orb-3"></div>
+
+    <!-- Icon -->
+    <div class="es-icon-wrap">
+        <div class="es-icon-ring"></div>
+        <div class="es-icon-ring es-icon-ring-2"></div>
+        <div class="es-icon">
+            <i class="bi bi-calendar-star"></i>
+        </div>
+    </div>
+
+    <!-- Text -->
+    <div th:if="${searchQuery == null and selectedType == null}">
+        <h2 class="es-title">No Events Yet</h2>
+        <p class="es-sub">The stage is empty — but the vibe is ready.<br>Be the first to create an event and get things started!</p>
+        <div class="es-actions">
+            <a href="/register" class="es-btn-primary" sec:authorize="!isAuthenticated()">
+                <i class="bi bi-person-plus"></i> Join &amp; Create Event
+            </a>
+            <a href="/events/create" class="es-btn-primary" sec:authorize="isAuthenticated()">
+                <i class="bi bi-plus-circle-fill"></i> Create First Event
+            </a>
+            <a href="/about" class="es-btn-ghost">
+                <i class="bi bi-info-circle"></i> Learn More
+            </a>
+        </div>
+        <!-- feature hint pills -->
+        <div class="es-hints">
+            <span class="es-hint"><i class="bi bi-bell-fill" style="color:#f472b6;"></i> Email reminders</span>
+            <span class="es-hint"><i class="bi bi-people-fill" style="color:#818cf8;"></i> RSVP tracking</span>
+            <span class="es-hint"><i class="bi bi-shield-check" style="color:#34d399;"></i> Free to join</span>
+        </div>
+    </div>
+
+    <div th:if="${searchQuery != null or selectedType != null}">
+        <h2 class="es-title">Nothing matches</h2>
+        <p class="es-sub">No events found for your search. Try different keywords or clear the filters.</p>
+        <div class="es-actions">
+            <a href="/" class="es-btn-primary">
+                <i class="bi bi-arrow-left"></i> Clear Filters
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .empty-state-wrap {
+        position: relative;
+        text-align: center;
+        padding: 80px 24px 100px;
+        overflow: hidden;
+    }
+    .es-orb {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        filter: blur(60px);
+    }
+    .es-orb-1 { width: 300px; height: 300px; background: rgba(108,99,255,0.12); top: -60px; left: 50%; transform: translateX(-60%); }
+    .es-orb-2 { width: 200px; height: 200px; background: rgba(244,114,182,0.1); bottom: 20px; left: 20%; }
+    .es-orb-3 { width: 180px; height: 180px; background: rgba(52,211,153,0.08); bottom: 0; right: 15%; }
+
+    .es-icon-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 32px;
+    }
+    .es-icon-ring {
+        position: absolute;
+        width: 120px; height: 120px;
+        border-radius: 50%;
+        border: 1px solid rgba(108,99,255,0.25);
+        animation: esRingPulse 2.5s ease-in-out infinite;
+    }
+    .es-icon-ring-2 {
+        width: 160px; height: 160px;
+        border-color: rgba(108,99,255,0.12);
+        animation-delay: 0.6s;
+    }
+    @keyframes esRingPulse {
+        0%,100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.08); opacity: 0.5; }
+    }
+    .es-icon {
+        width: 90px; height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(108,99,255,0.25), rgba(244,114,182,0.15));
+        border: 1px solid rgba(108,99,255,0.35);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.4rem;
+        color: #818cf8;
+        box-shadow: 0 0 40px rgba(108,99,255,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+        animation: esIconFloat 4s ease-in-out infinite;
+        position: relative; z-index: 1;
+    }
+    @keyframes esIconFloat {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    .es-title {
+        font-size: 2rem; font-weight: 800;
+        color: #f1f5f9;
+        margin-bottom: 12px;
+        letter-spacing: -0.5px;
+    }
+    .es-sub {
+        color: #64748b; font-size: 1rem; line-height: 1.7;
+        max-width: 440px; margin: 0 auto 32px;
+    }
+    .es-actions {
+        display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+        margin-bottom: 32px;
+    }
+    .es-btn-primary {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: linear-gradient(135deg, #6c63ff, #5a52d5);
+        color: #fff !important; text-decoration: none;
+        border-radius: 12px; padding: 13px 28px;
+        font-weight: 700; font-size: 0.95rem;
+        box-shadow: 0 6px 20px rgba(108,99,255,0.4);
+        transition: all 0.25s;
+    }
+    .es-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(108,99,255,0.55); }
+    .es-btn-ghost {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: #94a3b8 !important; text-decoration: none;
+        border-radius: 12px; padding: 13px 28px;
+        font-weight: 600; font-size: 0.95rem;
+        transition: all 0.25s;
+    }
+    .es-btn-ghost:hover { background: rgba(255,255,255,0.09); color: #e2e8f0 !important; }
+    .es-hints {
+        display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+    .es-hint {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 99px; padding: 6px 16px;
+        color: #94a3b8; font-size: 0.82rem; font-weight: 500;
+    }
+</style>
+</div>
+
+<script>
+(function() {
+    var phrases = [
+        'Sports & Tournaments',
+        'Cultural Festivals',
+        'Tech Workshops',
+        'Academic Talks',
+        'Campus Hangouts',
+        'Music & Art Shows',
+        'Career Fairs',
+        'University Life'
+    ];
+    var el = document.getElementById('vibeTyped');
+    if (!el) return;
+    var phraseIdx = 0, charIdx = 0, deleting = false;
+    function tick() {
+        var current = phrases[phraseIdx];
+        if (!deleting) {
+            charIdx++;
+            el.textContent = current.substring(0, charIdx);
+            if (charIdx === current.length) {
+                deleting = true;
+                setTimeout(tick, 1800);
+                return;
+            }
+            setTimeout(tick, 80);
+        } else {
+            charIdx--;
+            el.textContent = current.substring(0, charIdx);
+            if (charIdx === 0) {
+                deleting = false;
+                phraseIdx = (phraseIdx + 1) % phrases.length;
+            }
+            setTimeout(tick, charIdx === 0 ? 300 : 45);
+        }
+    }
+    setTimeout(tick, 800);
+})();
+</script>
+</body>
+</html>

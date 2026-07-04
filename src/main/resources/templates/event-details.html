@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout :: layout (~{::content})}">
+<body>
+<div th:fragment="content">
+<style>
+    .detail-hero {
+        border-radius: 20px;
+        padding: 40px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 28px;
+    }
+    .detail-hero::before {
+        content:''; position:absolute; top:-80px; right:-80px;
+        width:250px; height:250px;
+        background:radial-gradient(circle,rgba(255,255,255,.15) 0%,transparent 70%);
+    }
+    .detail-card {
+        background: #161B27;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        overflow: hidden;
+    }
+    .detail-card-body { padding: 32px; }
+    .meta-block {
+        display: flex; align-items: center; gap: 14px;
+        background: #0D1117; border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 12px;
+        padding: 16px 18px; height: 100%;
+    }
+    .meta-icon {
+        width: 44px; height: 44px; border-radius: 10px;
+        background: linear-gradient(135deg, #6C63FF, #5A52D5);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; color: white; font-size: 1.1rem;
+    }
+    .meta-label { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: #475569; margin-bottom: 2px; }
+    .meta-value { font-size: 0.93rem; font-weight: 700; color: #E2E8F0; }
+    .rsvp-box {
+        background: #0D1117;
+        border-radius: 14px;
+        padding: 24px;
+        border: 1.5px solid rgba(255,255,255,0.06);
+        margin-top: 28px;
+    }
+    .attendee-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        transition: background 0.2s;
+    }
+    .attendee-item:hover { background: rgba(108,99,255,0.07); }
+    .attendee-avatar {
+        width: 38px; height: 38px; border-radius: 50%;
+        background: linear-gradient(135deg, #6C63FF, #5A52D5);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    .side-card {
+        background: #161B27;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        overflow: hidden;
+        position: sticky; top: 90px;
+    }
+    .side-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        font-weight: 800;
+        font-size: 1rem;
+        color: #E2E8F0;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .side-card-body { padding: 8px 16px 16px; max-height: 420px; overflow-y: auto; }
+</style>
+
+<!-- Back -->
+<div class="mb-3 animate-fade-in">
+    <a href="/" class="btn btn-secondary btn-sm" style="border-radius:8px;font-size:0.85rem;">
+        <i class="bi bi-arrow-left me-1"></i>Back to Events
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- MAIN COLUMN -->
+    <div class="col-lg-8">
+        <!-- Hero header -->
+        <div class="detail-hero animate-fade-in"
+             th:classappend="${event.type == 'Sports'   ? 'type-strip-sports'   :
+                              event.type == 'Cultural' ? 'type-strip-cultural' :
+                              event.type == 'Workshop' ? 'type-strip-workshop' :
+                              event.type == 'Social'   ? 'type-strip-social'   :
+                              'type-strip-academic'}">
+            <div style="position:relative;z-index:1;">
+                <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+                    <span style="background:rgba(255,255,255,0.2);backdrop-filter:blur(6px);border-radius:6px;padding:5px 14px;font-size:0.82rem;font-weight:700;">
+                        <span th:if="${event.type == 'Sports'}">&#x26BD;</span>
+                        <span th:if="${event.type == 'Cultural'}">&#x1F3AD;</span>
+                        <span th:if="${event.type == 'Workshop'}">&#x1F4A1;</span>
+                        <span th:if="${event.type == 'Academic'}">&#x1F4DA;</span>
+                        <span th:if="${event.type == 'Social'}">&#x1F91D;</span>
+                        &nbsp;<span th:text="${event.type}">Type</span>
+                    </span>
+                    <span style="background:rgba(255,255,255,0.2);backdrop-filter:blur(6px);border-radius:6px;padding:5px 14px;font-size:0.82rem;font-weight:700;">
+                        <i class="bi bi-people-fill me-1"></i><span th:text="${event.rsvpCount}">0</span> attending
+                    </span>
+                </div>
+                <h1 style="font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;letter-spacing:-0.5px;margin-bottom:0;" th:text="${event.title}">Title</h1>
+            </div>
+        </div>
+
+        <!-- Meta grid -->
+        <div class="row g-3 mb-4 animate-fade-in">
+            <div class="col-6 col-md-3">
+                <div class="meta-block">
+                    <div class="meta-icon"><i class="bi bi-calendar3"></i></div>
+                    <div>
+                        <div class="meta-label">Date</div>
+                        <div class="meta-value" th:text="${event.date}">—</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="meta-block">
+                    <div class="meta-icon"><i class="bi bi-clock"></i></div>
+                    <div>
+                        <div class="meta-label">Time</div>
+                        <div class="meta-value" th:text="${event.time}">—</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="meta-block">
+                    <div class="meta-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                    <div>
+                        <div class="meta-label">Location</div>
+                        <div class="meta-value" th:text="${event.location}">—</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="meta-block">
+                    <div class="meta-icon"><i class="bi bi-person-circle"></i></div>
+                    <div>
+                        <div class="meta-label">Organizer</div>
+                        <div class="meta-value" th:text="${event.createdBy.name}">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="detail-card animate-fade-in">
+            <div class="detail-card-body">
+                <h5 style="font-weight:800;color:#0F172A;margin-bottom:14px;font-size:1.05rem;">
+                    <i class="bi bi-info-circle me-2" style="color:#6C63FF;"></i>About This Event
+                </h5>
+                <p style="color:#475569;line-height:1.8;font-size:0.95rem;margin-bottom:0;" th:text="${event.description}">Description</p>
+
+                <!-- RSVP Actions -->
+                <div class="rsvp-box" sec:authorize="isAuthenticated()">
+                    <div th:if="${!hasRSVPd}">
+                        <h6 style="font-weight:700;color:#0F172A;margin-bottom:4px;">Ready to join?</h6>
+                        <p style="color:#64748B;font-size:0.85rem;margin-bottom:16px;">RSVP now and we'll remind you 24 hours before the event.</p>
+                        <form th:action="@{/events/{id}/rsvp(id=${event.id})}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-success me-2">
+                                <i class="bi bi-check-circle me-1"></i>RSVP — I'm Going!
+                            </button>
+                        </form>
+                        <span style="font-size:0.8rem;color:#94A3B8;"><i class="bi bi-bell me-1"></i>Auto-reminder included</span>
+                    </div>
+                    <div th:if="${hasRSVPd}">
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <div style="background:#ECFDF5;border:1px solid #6EE7B7;color:#059669;border-radius:10px;padding:10px 16px;font-size:0.88rem;font-weight:700;">
+                                <i class="bi bi-check-circle-fill me-1"></i>You're going! Reminder set.
+                            </div>
+                            <form th:action="@{/events/{id}/cancel-rsvp(id=${event.id})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Cancel your RSVP?')">
+                                    <i class="bi bi-x-circle me-1"></i>Cancel RSVP
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Delete (organizer only) -->
+                    <form th:if="${#authentication.name == event.createdBy.email}"
+                          th:action="@{/events/{id}/delete(id=${event.id})}" method="post" class="d-inline ms-2 mt-2">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Permanently delete this event?')">
+                            <i class="bi bi-trash me-1"></i>Delete Event
+                        </button>
+                    </form>
+                </div>
+
+                <div sec:authorize="!isAuthenticated()"
+                     style="background:#EEF2FF;border:1px solid #C7D2FE;color:#4338CA;border-radius:12px;padding:14px 18px;margin-top:20px;font-size:0.9rem;">
+                    <i class="bi bi-lock me-2"></i>
+                    <a href="/login" style="color:#4338CA;font-weight:700;">Sign in</a> to RSVP for this event.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDE COLUMN: Attendees -->
+    <div class="col-lg-4 animate-fade-in" style="animation-delay:0.15s;">
+        <div class="side-card">
+            <div class="side-card-header">
+                <i class="bi bi-people-fill" style="color:#6C63FF;"></i>
+                Attendees
+                <span style="background:#EEF2FF;color:#6C63FF;border-radius:6px;padding:2px 10px;font-size:0.8rem;margin-left:auto;"
+                      th:text="${#lists.size(rsvps)}">0</span>
+            </div>
+            <div class="side-card-body">
+                <div th:each="rsvp : ${rsvps}" class="attendee-item">
+                    <div class="attendee-avatar" th:text="${#strings.substring(rsvp.user.name, 0, 1)}">U</div>
+                    <div>
+                        <div style="font-weight:600;font-size:0.88rem;color:#E2E8F0;" th:text="${rsvp.user.name}">Name</div>
+                        <div style="font-size:0.75rem;color:#475569;"><i class="bi bi-check-circle-fill me-1" style="color:#34D399;"></i>Attending</div>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(rsvps)}" class="text-center py-5">
+                    <i class="bi bi-person-plus" style="font-size:2.5rem;color:#374151;"></i>
+                    <p style="color:#475569;font-size:0.85rem;margin-top:12px;">No attendees yet.<br>Be the first!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

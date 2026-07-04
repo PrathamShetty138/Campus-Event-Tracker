@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout (~{::content})}">
+<body>
+<div th:fragment="content">
+<style>
+    .create-wrap {
+        max-width: 760px; margin: 0 auto;
+    }
+    .create-header {
+        background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #312E81 100%);
+        border-radius: 16px;
+        padding: 36px 40px;
+        color: white;
+        margin-bottom: 28px;
+        position: relative; overflow: hidden;
+    }
+    .create-header::before {
+        content:'';position:absolute;top:-60px;right:-60px;
+        width:200px;height:200px;
+        background:radial-gradient(circle,rgba(108,99,255,.4) 0%,transparent 70%);
+    }
+    .create-card {
+        background: #161B27;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        padding: 36px 40px;
+    }
+    .form-section-title {
+        font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.5px; color: #374151; margin-bottom: 16px;
+        padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .custom-label {
+        display: block; font-size: 0.82rem; font-weight: 700;
+        color: #64748B; text-transform: uppercase; letter-spacing: 0.3px;
+        margin-bottom: 7px;
+    }
+    .type-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+    .type-option { display: none; }
+    .type-label {
+        display: flex; flex-direction: column; align-items: center;
+        gap: 4px; padding: 14px 18px;
+        border: 1.5px solid rgba(255,255,255,0.08); border-radius: 12px;
+        cursor: pointer; transition: all 0.2s;
+        font-size: 0.82rem; font-weight: 600; color: #475569;
+        min-width: 90px; text-align: center;
+        background: #0D1117;
+    }
+    .type-label .type-emoji { font-size: 1.5rem; margin-bottom: 2px; }
+    .type-option:checked + .type-label {
+        border-color: #6C63FF; background: rgba(108,99,255,0.15); color: #818CF8;
+        box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+    }
+    .type-label:hover { border-color: #6C63FF; color: #818CF8; }
+</style>
+
+<div class="create-wrap animate-fade-in">
+    <!-- Header -->
+    <div class="create-header">
+        <div style="position:relative;z-index:1;">
+            <div style="width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+                <i class="bi bi-calendar-plus-fill" style="font-size:1.4rem;"></i>
+            </div>
+            <h2 style="font-weight:800;font-size:1.7rem;margin-bottom:6px;letter-spacing:-0.4px;">Create a New Event</h2>
+            <p style="color:#94A3B8;font-size:0.9rem;margin:0;">Fill in the details below and get your event listed in minutes.</p>
+        </div>
+    </div>
+
+    <!-- Form card -->
+    <div class="create-card">
+        <form th:action="@{/events/create}" method="post" th:object="${event}">
+
+            <!-- Basic Info -->
+            <div class="form-section-title">Basic Information</div>
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <label class="custom-label">Event Title</label>
+                    <input type="text" class="form-control" th:field="*{title}"
+                           placeholder="e.g. Annual Cultural Fest 2025" required>
+                    <div class="text-danger mt-1" style="font-size:0.8rem;" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="custom-label">Event Type</label>
+                    <!-- Custom type selector -->
+                    <div class="type-selector">
+                        <input type="radio" class="type-option" id="t-sports"   name="type" value="Sports"
+                               th:checked="${event.type == 'Sports'}">
+                        <label class="type-label" for="t-sports">
+                            <span class="type-emoji">⚽</span>Sports
+                        </label>
+
+                        <input type="radio" class="type-option" id="t-cultural" name="type" value="Cultural"
+                               th:checked="${event.type == 'Cultural'}">
+                        <label class="type-label" for="t-cultural">
+                            <span class="type-emoji">🎭</span>Cultural
+                        </label>
+
+                        <input type="radio" class="type-option" id="t-workshop" name="type" value="Workshop"
+                               th:checked="${event.type == 'Workshop'}">
+                        <label class="type-label" for="t-workshop">
+                            <span class="type-emoji">💡</span>Workshop
+                        </label>
+
+                        <input type="radio" class="type-option" id="t-academic" name="type" value="Academic"
+                               th:checked="${event.type == 'Academic'}">
+                        <label class="type-label" for="t-academic">
+                            <span class="type-emoji">&#x1F4DA;</span>Academic
+                        </label>
+
+                        <input type="radio" class="type-option" id="t-social" name="type" value="Social"
+                               th:checked="${event.type == 'Social'}">
+                        <label class="type-label" for="t-social">
+                            <span class="type-emoji">&#x1F91D;</span>Social
+                        </label>
+                    </div>
+                    <!-- Hidden select for Thymeleaf binding (keep hidden, radio syncs it) -->
+                    <select class="form-select d-none" id="type" th:field="*{type}" required>
+                        <option value="">Select Type</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Cultural">Cultural</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Academic">Academic</option>
+                        <option value="Social">Social</option>
+                    </select>
+                    <div class="text-danger mt-1" style="font-size:0.8rem;" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+                </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="form-section-title">Date &amp; Time</div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="custom-label">Event Date</label>
+                    <input type="date" class="form-control" th:field="*{date}" required>
+                    <div class="text-danger mt-1" style="font-size:0.8rem;" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="custom-label">Event Time</label>
+                    <input type="time" class="form-control" th:field="*{time}" required>
+                    <div class="text-danger mt-1" style="font-size:0.8rem;" th:if="${#fields.hasErrors('time')}" th:errors="*{time}"></div>
+                </div>
+            </div>
+
+            <!-- Location & Description -->
+            <div class="form-section-title">Details</div>
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <label class="custom-label">Location / Venue</label>
+                    <input type="text" class="form-control" th:field="*{location}"
+                           placeholder="e.g. Main Auditorium, Block A" required>
+                    <div class="text-danger mt-1" style="font-size:0.8rem;" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="custom-label">Description</label>
+                    <textarea class="form-control" th:field="*{description}" rows="5"
+                              placeholder="Tell attendees what this event is about, what to bring, what to expect..."></textarea>
+                    <div style="font-size:0.78rem;color:#94A3B8;margin-top:5px;">Max 1000 characters</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-3 pt-2">
+                <button type="submit" class="btn btn-primary px-5">
+                    <i class="bi bi-plus-circle me-2"></i>Publish Event
+                </button>
+                <a href="/" class="btn btn-secondary px-4">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Sync radio buttons to the hidden select for Thymeleaf
+    document.querySelectorAll('.type-option').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            document.getElementById('type').value = this.value;
+        });
+    });
+</script>
+</div>
+</body>
+</html>
